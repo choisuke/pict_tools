@@ -1,12 +1,17 @@
 import cv2
 import numpy as np
 
-def adjust_size(img, x_size, y_size):
-    x, y, z = img.shape
-    x_size, y_size = max(x_size, x), max(y_size, y)
-    x_adjust, y_adjust = int((x_size-x)/2), int((y_size-y)/2)
+def adjust_size(img, width, height):
+    '''
+    画像に指定されたサイズまで余白（黒）を追加する処理
+    元画像は中央に合成されます。
+    指定されたサイズよりも大きい画像の場合は、余白は追加されません。
+    '''
+    h, w, chanel = img.shape
+    width, height = max(width, w), max(height, h)
+    w_adjust, h_adjust = int((width-w)/2), int((height-h)/2)
 
-    zero = cv2.resize(np.zeros((1, 1, z), np.float), (x_size, y_size))
-    zero.resize(y_size, x_size, z)
-    zero[y_adjust:y_adjust+y, x_adjust:x_adjust+x] = img
+    zero = cv2.resize(np.zeros((1, 1, chanel), np.float), (width, height))  # 余白用の画像を作成
+    zero.resize(height, width, chanel)  # grayscale の場合に chanel が消えるための対応
+    zero[h_adjust:h_adjust+h, w_adjust:w_adjust+w] = img    # 作成した余白画像の中央に元画像を入れる
     return zero
